@@ -6,7 +6,7 @@ import { ContactForm } from 'components/ContactForm/ContactForm';
 import { initialValues } from 'utiles/initialValues';
 import { Filter } from 'components/Filter/Filter';
 
-
+const LS_KEY='contacts';
 
 
 export class App extends Component {
@@ -14,6 +14,22 @@ export class App extends Component {
     contacts: [...initialValues],    
     filter:''
   };  
+
+  componentDidMount() {    
+    JSON.parse(localStorage.getItem(LS_KEY));
+    
+    if (localStorage.getItem(LS_KEY)) {
+      this.setState({
+        contacts:JSON.parse(localStorage.getItem(LS_KEY))
+      })
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (this.state.contacts !== prevState.contacts) {      
+      localStorage.setItem(LS_KEY, JSON.stringify(this.state.contacts));
+    }
+  }
 
   handleSubmit = (obj) => {     
     this.setState(prevState => ({
@@ -46,7 +62,7 @@ export class App extends Component {
   render() {
     
     return (<>
-    <PageTitle>goit react hw 02 phonebook</PageTitle>
+    <PageTitle>goit react hw 03 phonebook</PageTitle>
       <Container>
         <SectionTitle>Phonebook</SectionTitle>
         <ContactForm onSubmit={this.handleSubmit} isNamePresent={this.isNamePresent} />
