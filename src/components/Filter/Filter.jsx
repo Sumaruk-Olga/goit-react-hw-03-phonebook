@@ -1,12 +1,13 @@
 import PropTypes from 'prop-types';
-import { Label } from "components/Filter/Filter.styled";
-import { Input } from "components/ContactForm/ContactForm.styled";
+import { Label, Input } from "components/Filter/Filter.styled";
+
+
 
 
 export const Filter = ({ value, onChange }) => (
   <Label>
     Find contacts by name
-    <Input type="text" value={value} onChange={onChange} />
+    <Input type="text" value={value} onChange={onChange} title='start typing a name to search'/>
   </Label>
 );
 

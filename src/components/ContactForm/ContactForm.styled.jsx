@@ -1,6 +1,7 @@
 import styled from "@emotion/styled";
+import { Field, Form } from 'formik';
 
-export const Form = styled.form`
+export const StyledForm = styled(Form)`
 width: 100%;
 display: flex;
 flex-direction: column;
@@ -30,7 +31,7 @@ cursor: pointer;
     }
 `;
 
-export const Input = styled.input`
+export const StyledField = styled(Field)`
 margin-left: 5px;
 width: 65%;
 border: 1px solid ${p=>p.theme.colors.accent};

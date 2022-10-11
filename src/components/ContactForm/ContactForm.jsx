@@ -1,69 +1,67 @@
 import PropTypes from 'prop-types';
 import { Component } from "react";
 import { nanoid } from 'nanoid';
-import { Form, Button, Input } from "./ContactForm.styled";
+import { Formik, ErrorMessage  } from 'formik';
+import * as Yup from 'yup';
+import "yup-phone-lite";
+import { StyledForm, Button, StyledField } from "./ContactForm.styled";
 
 
+
+const initialValues = {
+  name: '',
+  number:''
+}
+
+const schema = Yup.object().shape({
+  name: Yup.string().required(),
+  number: Yup.string().phone().required(),
+});
 
 export class ContactForm extends Component {    
-    state = {
-        name: '',
-        number: '',
-    };
+
 
     getId = () => {
         return nanoid();
     }
-
-
-    handleChange = (e) => {        
-        this.setState({ [e.currentTarget.name]: e.currentTarget.value,  });        
-    }
-
-
-    reset = () => {
-        this.setState({ name: '', number: '' });
-    };
+  
+  handleFormikSubmit = (values, { resetForm }) => {  
+    const {isNamePresent, onSubmit} = this.props;
     
+    const newName = isNamePresent(values.name);
 
-    handleSubmit = (e) => {
-      e.preventDefault();
-      const isNamePresent = this.props.isNamePresent(this.state.name);
-
-      if (!isNamePresent) {
-        this.props.onSubmit({ ...this.state, id: nanoid() });   
-        this.reset();
+    if (!newName) {
+        onSubmit({ ...values, id: nanoid() });   
+        resetForm();
       } else {
-        alert(`${this.state.name} is already in contacts`);
-      }    
-    }
+        alert(`${values.name} is already in contacts`);
+      }
+  }
 
-    render() {
-        return <Form autoComplete="off" onSubmit={this.handleSubmit} >
+  render() {
+    return <Formik initialValues={initialValues}
+        validationSchema={schema}
+        onSubmit={this.handleFormikSubmit}>
+      <StyledForm autoComplete="off">
           <label>Name
-            <Input
+            <StyledField
               type="text"
               name="name"
-              value={this.state.name}
-              onChange={this.handleChange}
-              pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
               title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
-              required
-            />
+          />
+          <ErrorMessage name="name" render={msg=> alert("Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan")}/>
           </label>
           <label>Number
-            <Input
+            <StyledField
               type="tel"
-              name="number"
-              value={this.state.number}
-              onChange={this.handleChange}
-              pattern="\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
-              title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
-              required
-            />
+            name="number"
+            title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
+          />
+          <ErrorMessage name="number" render={msg => alert("Phone number must be digits and can contain spaces, dashes, parentheses and can start with +")}/>
           </label>
-          <Button type='submit'>add</Button>
-      </Form>      
+          <Button type='submit' title='add contact' aria-label='add contact'>add</Button>
+        </StyledForm>   
+      </Formik>  
     }
     
 }
